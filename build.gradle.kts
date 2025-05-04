@@ -102,11 +102,8 @@ dependencies {
 	implementation("com.google.protobuf:protobuf-kotlin:4.28.2")
 
 	// S3
-	implementation("io.minio:minio:8.5.13")
-
-	// SWAGGER
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-	runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.8.0")
+	implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+	implementation("software.amazon.awssdk:s3")
 
 	// KAFKA
 	implementation("org.springframework.kafka:spring-kafka")
@@ -114,6 +111,12 @@ dependencies {
 
 	// REFLECTION
 	implementation("org.springframework.boot:spring-boot-starter-aop")
+
+	// SUPPORT
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+	// OPEN API
+	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 }
 
 kotlin {

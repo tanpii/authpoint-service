@@ -2,9 +2,9 @@ spring:
   application:
     name: authpoint
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://authpoint_db:5432/authpoint_db
+    username: authpoint_user
+    password: authpoint_password
     driverClassName: org.postgresql.Driver
   flyway:
     enabled: true
@@ -13,24 +13,25 @@ spring:
     activate:
       on-profile: default
 
+management:
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+
 jwt:
   secret: youshallnotpassyoushallnotpassyoushallnotpassyoushallnotpassyoushallnotpassyoushallnotpassyoushallnotpassyoushallnotpass
 
 grpc:
   server:
     port: 9098
-
-minio:
-  bucketName: userprofilepics
-  url: http://localhost:9000
-  access_key: authpoint
-  secret_key: youshallnotpass
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /docs/swagger-ui
+    address: 0.0.0.0
+    security:
+      enabled: false
 
 kafka:
   topics:
@@ -39,7 +40,7 @@ kafka:
   clusters:
     default:
       bootstrap-servers:
-        - localhost:29092
+        - tochkaszapyatoi.ru:29092
       properties:
         acks: -1
         delivery.timeout.ms: 90000
@@ -56,7 +57,7 @@ kafka:
 web-clients:
   clients:
     bookpoint:
-      destination: http://localhost:8081
+      destination: http://tochkaszapyatoi.ru:8081
       headers:
         X-INTERNAL-API: "AUTH_POINT_INTERNAL_KEY"
 
@@ -64,3 +65,10 @@ api:
   management:
     header: "X-MANAGEMENT-API"
     key: "AUTH-POINT"
+
+server:
+  error:
+    whitelabel:
+      enabled: off
+  tomcat:
+    reject-illegal-header: off

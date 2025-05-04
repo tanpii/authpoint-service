@@ -1,7 +1,9 @@
 package ru.tanpii.authpoint.domain.service.user
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import ru.tanpii.authpoint.domain.model.exception.UserAlreadyExistsException
 import ru.tanpii.authpoint.domain.model.exception.WrongPasswordException
 import ru.tanpii.authpoint.api.model.request.AuthenticationRequest
@@ -55,16 +57,21 @@ class UserService(
     }
 
     fun verifyUser(request: AuthenticationRequest): UUID {
-        logger.info { "Start verifying user, email=${request.email}" }
+        try {
+            logger.info { "Start verifying user, email=${request.email}" }
 
-        val userPrivateData = userDataComponent.getUserPrivateData(request.email)
-        val hashedPassword = encryptionService.encrypt(request.password, userPrivateData.salt)
-        if (hashedPassword != userPrivateData.password) {
-            throw WrongPasswordException("Password is incorrect")
+            val userPrivateData = userDataComponent.getUserPrivateData(request.email)
+            val hashedPassword = encryptionService.encrypt(request.password, userPrivateData.salt)
+            if (hashedPassword != userPrivateData.password) {
+                throw WrongPasswordException("Password is incorrect")
+            }
+
+            logger.info { "End of verifying user, email=${request.email}" }
+            return userPrivateData.uuid
+        } catch (ex: RuntimeException) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad data")
         }
 
-        logger.info { "End of verifying user, email=${request.email}" }
-        return userPrivateData.uuid
     }
 
     fun userExistsByEmail(email: String): Boolean = userDataComponent.findUserDataByEmail(email)

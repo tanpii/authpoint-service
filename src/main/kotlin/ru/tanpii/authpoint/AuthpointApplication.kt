@@ -5,13 +5,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import ru.tanpii.authpoint.support.properties.AuthpointKafkaProperties
 import ru.tanpii.authpoint.support.properties.ManagementApiProperties
+import ru.tanpii.authpoint.support.properties.S3Properties
 import ru.tanpii.authpoint.support.properties.WebClientProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties(
     WebClientProperties::class,
     AuthpointKafkaProperties::class,
-    ManagementApiProperties::class
+    ManagementApiProperties::class,
+    S3Properties::class,
 )
 class AuthpointApplication
 

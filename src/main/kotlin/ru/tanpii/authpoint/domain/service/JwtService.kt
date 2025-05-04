@@ -3,7 +3,9 @@ package ru.tanpii.authpoint.domain.service
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.SecretKey
@@ -24,7 +26,7 @@ class JwtService(
             .and()
             .compact()
 
-    fun getUserId(token: String): UUID =
+    fun getUserId(token: String): UUID = try {
         Jwts
             .parser()
             .verifyWith(getSigningKey())
@@ -33,6 +35,10 @@ class JwtService(
             .payload
             .get(CLIENT_ID_FIELD, String::class.java)
             .let { UUID.fromString(it) }
+    } catch (ex: Exception) {
+        throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid token")
+    }
+
 
     private fun getSigningKey(): SecretKey {
         val keyBytes: ByteArray = key.toByteArray(StandardCharsets.UTF_8)
